@@ -37,3 +37,23 @@
 .header a.active {
   color: white;
 }
+
+@media only screen and (max-width: 840px) {
+  .header {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 7.2rem;
+  }
+  .header ul{
+    align-items: center;
+
+    flex-direction: column;
+  }
+  .header li {
+    margin-left: 0;
+    text-align: center;
+    font-weight: bold;
+  }
+
+}
