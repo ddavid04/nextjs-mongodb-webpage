@@ -21,10 +21,6 @@ export default function NewMeetupPage() {
     }
 
     return (<Fragment>
-        <Head>
-            <title>Add new meetup</title>
-            <meta name={'description'} content={'Add your own meetup place'}/>
-        </Head>
         <NewMeetupForm onAddMeetup={addMeetupHandler}/>
     </Fragment>);
 }

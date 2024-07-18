@@ -6,10 +6,6 @@ import {Head} from "next/document";
 
 function HomePage(props) {
     return (<Fragment>
-        <Head>
-        <title>React Meetups</title>
-        <meta name={'description'} content={'React Meetups'}/>
-        </Head>
         <MeetupList meetups={props.meetups}/>
     </Fragment>);
 }
