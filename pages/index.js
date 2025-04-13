@@ -10,43 +10,37 @@ function HomePage(props) {
     </Fragment>);
 }
 
-// export async function getServerSideProps(context) {
-//     // fetch data from api
-//     const req = context.req;
-//     const res = context.res;
-//
-//     return{
-//         props:{
-//             meetups: DUMMY_MEETUPS,
-//         }
-//     }
-// }
-
 export async function getStaticProps() {
-    // fetch data from an API
-    const client = await MongoClient.connect(
-        'mongodb+srv://ddavid_4:uoUK6bp6lVOp53xd@cluster0.uxym1wx.mongodb.net/meetups?retryWrites=true&w=majority&appName=Cluster0'
-    );
-    const db = client.db();
+    try {
+        const client = await MongoClient.connect(process.env.MONGODB_URI);
+        const db = client.db();
+        const meetupsCollection = db.collection('meetups');
+        const meetups = await meetupsCollection.find().toArray();
+        client.close();
 
-    const meetupsCollection = db.collection('meetups');
+        return {
+            props: {
+                meetups: meetups.map((meetup) => ({
+                    title: meetup.title,
+                    address: meetup.address,
+                    image: meetup.image,
+                    id: meetup._id.toString(),
+                })),
+            },
+            revalidate: 1,
+        };
+    } catch (error) {
+        console.error('MongoDB connection error:', error.message);
 
-    const meetups = await meetupsCollection.find().toArray();
-
-
-    client.close();
-
-    return {
-        props: {
-            meetups: meetups.map((meetup) => ({
-                title: meetup.title,
-                address: meetup.address,
-                image: meetup.image,
-                id: meetup._id.toString(),
-            })),
-        },
-        revalidate: 1,
-    };
+        return {
+            props: {
+                meetups: [],
+                error: 'Failed to fetch data. Try again later.',
+            },
+            revalidate: 10, // try again after 10 seconds
+        };
+    }
 }
+
 
 export default HomePage;

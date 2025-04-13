@@ -3,19 +3,24 @@ import {MongoClient} from "mongodb";
 export default async function handler(req, res) {
     if(req.method === 'POST'){
         const data = req.body;
+        try {
+            const client = await MongoClient.connect(process.env.MONGODB_URI);
+            const db = client.db('meetups');
 
-        const client = await MongoClient.connect('mongodb+srv://ddavid_4:uoUK6bp6lVOp53xd@cluster0.uxym1wx.mongodb.net/meetups?retryWrites=true&w=majority&appName=Cluster0');
-        const db = client.db('meetups');
+            const meetupsCollection = db.collection('meetups');
 
-        const meetupsCollection = db.collection('meetups');
+            const result = await meetupsCollection.insertOne(data)
 
-        const result = await meetupsCollection.insertOne(data)
+            client.close();
 
-        client.close();
-
-        res.status(201).json({
-            message: 'Successfully created meetup'
-        })
+            res.status(201).json({
+                message: 'Successfully created meetup'
+            })
+        } catch (err) {
+            res.status(500).json({
+                message: 'Something went wrong'
+            })
+        }
     }
 }
 
